@@ -9,6 +9,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Book, BookSchema } from './schema/book.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseModule } from 'shared/database.module';
+import { UsersResolver } from './users.resolver';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { DatabaseModule } from 'shared/database.module';
     DatabaseModule,
     MongooseModule.forFeature([{ name: Book.name, schema: BookSchema }]),
   ],
-  providers: [BooksResolver, BooksService],
+  providers: [BooksResolver, BooksService, UsersResolver],
 })
 export class BooksModule {}

@@ -11,6 +11,8 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { User as UserSchema } from '../schema/user.schema';
+import { UseInterceptors } from '@nestjs/common';
+import { GraphqlInterceptor } from 'shared/graphql.interceptor';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -22,7 +24,8 @@ export class UsersResolver {
   }
 
   @Query(() => [User], { name: 'users' })
-  async findAll() {
+  @UseInterceptors(GraphqlInterceptor)
+  async getAllUsers() {
     try {
       const users = await this.usersService.findAll();
       return users;
@@ -32,7 +35,7 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  async findOne(@Args('id', { type: () => Int }) id: number) {
+  async getUserById(@Args('id', { type: () => Int }) id: number) {
     try {
       const user = await this.usersService.findOne(id);
       return user;

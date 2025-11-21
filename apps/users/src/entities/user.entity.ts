@@ -2,6 +2,8 @@ import { ObjectType, Field, Directive, ID } from '@nestjs/graphql';
 
 @ObjectType()
 @Directive('@key(fields: "name")')
+// Do not use this if implemented redis cache using interceptors
+// @Directive('@cacheControl(maxAge: 60)')
 export class User {
   @Field(() => ID, {
     nullable: true,

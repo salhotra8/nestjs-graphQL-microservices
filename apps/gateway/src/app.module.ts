@@ -5,9 +5,11 @@ import { DatabaseModule } from 'shared/database.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { IntrospectAndCompose } from '@apollo/gateway';
+import { CachingModule } from 'shared/caching.module';
 
 @Module({
   imports: [
+    CachingModule,
     DatabaseModule,
     GraphQLModule.forRoot<ApolloGatewayDriverConfig>({
       driver: ApolloGatewayDriver,

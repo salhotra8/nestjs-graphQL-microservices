@@ -12,6 +12,8 @@ import { Book } from './entities/book.entity';
 import { CreateBookInput } from './dto/create-book.input';
 import { GraphQLError } from 'graphql';
 import { User } from './entities/user.entity';
+import { UseInterceptors } from '@nestjs/common';
+import { GraphqlInterceptor } from 'shared/graphql.interceptor';
 
 @Resolver(() => Book)
 export class BooksResolver {
@@ -22,8 +24,9 @@ export class BooksResolver {
     return this.booksService.create(createBookInput);
   }
 
-  @Query(() => [Book], { name: 'books' })
-  async findAll() {
+  @Query(() => [Book])
+  @UseInterceptors(GraphqlInterceptor)
+  async getAllBooks() {
     try {
       const books = await this.booksService.findAll();
       return books;
@@ -32,8 +35,8 @@ export class BooksResolver {
     }
   }
 
-  @Query(() => Book, { name: 'book' })
-  async findOne(@Args('id', { type: () => String }) id: string) {
+  @Query(() => Book)
+  async getBookById(@Args('id', { type: () => String }) id: string) {
     try {
       const book = await this.booksService.findOne(id);
       return book;

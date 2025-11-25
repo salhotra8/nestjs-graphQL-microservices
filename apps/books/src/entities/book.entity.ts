@@ -3,6 +3,8 @@ import { User } from './user.entity';
 
 @ObjectType()
 @Directive('@key(fields: "_id")')
+// Do not use this if implemented redis cache using interceptors
+// @Directive('@cacheControl(maxAge: 60)')
 export class Book {
   @Field(() => ID, { description: 'Unique identifier for the book' })
   _id: string;

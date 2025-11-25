@@ -13,15 +13,19 @@ export class BooksService {
     return 'This action adds a new book';
   }
 
-  async findAll() {
-    return await this.bookModel.find({});
+  findAll(): Promise<Book[]> {
+    return this.bookModel.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} book`;
+  findOne(id: string): Promise<Book | null> {
+    return this.bookModel.findById(id);
   }
 
   remove(id: number) {
     return `This action removes a #${id} book`;
+  }
+
+  findAllByAuthorName(authorName: string): Promise<Book[]> {
+    return this.bookModel.find({ author: authorName });
   }
 }

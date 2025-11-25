@@ -17,11 +17,15 @@ export class UsersService {
     return this.userSchema.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: number): Promise<User[] | null> {
+    return this.userSchema.findById(id);
   }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  findUserByName(name: string): Promise<User | null> {
+    return this.userSchema.findOne({ name });
   }
 }

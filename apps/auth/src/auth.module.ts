@@ -1,26 +1,28 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersResolver } from './users.resolver';
-import { GraphQLModule } from '@nestjs/graphql';
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
-import { DatabaseModule } from 'shared/database.module';
-import { User, UserSchema } from '../schema/user.schema';
-import { MongooseModule } from '@nestjs/mongoose';
-import { CachingModule } from 'shared/caching.module';
+import { AuthService } from './auth.service';
+import { AuthResolver } from './auth.resolver';
 import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'apps/users/schema/user.schema';
 import {
-  GraphQLDirective,
   DirectiveLocation,
   GraphQLInt,
   GraphQLEnumType,
   GraphQLBoolean,
+  GraphQLDirective,
 } from 'graphql';
-import { UsersController } from './users.controller';
+import { CachingModule } from 'shared/caching.module';
+import { DatabaseModule } from 'shared/database.module';
+import {
+  ApolloFederationDriverConfig,
+  ApolloFederationDriver,
+} from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { JwtModule } from '@nestjs/jwt';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
+  providers: [AuthResolver, AuthService],
   imports: [
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
@@ -58,11 +60,29 @@ import { UsersController } from './users.controller';
         ApolloServerPluginCacheControl(), // Optional: set default global maxAge
       ],
     }),
+    ClientsModule.register([
+      {
+        name: 'AUTH_KAFKA_CLIENT',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'auth',
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: 'auth-producer-group',
+          },
+        },
+      },
+    ]),
+    // 2. JWT Setup
+    JwtModule.register({
+      secret: 'YOUR_SECRET_KEY', // change this later to get it from .env file
+      signOptions: { expiresIn: '1d' },
+    }),
     DatabaseModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     CachingModule,
   ],
-  controllers: [UsersController],
-  providers: [UsersResolver, UsersService],
 })
-export class UsersModule {}
+export class AuthModule {}

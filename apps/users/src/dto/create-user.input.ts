@@ -1,4 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
@@ -8,9 +9,16 @@ export class CreateUserInput {
   @Field(() => String, { description: 'Email address of the user' })
   email: string;
 
-  @Field(() => String, { description: 'Address of the user' })
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  @IsOptional()
+  @Field(() => String, { nullable: true, description: 'Address of the user' })
   address: string;
 
-  @Field(() => String, { description: 'Phone number of the user' })
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  @IsOptional()
+  @Field(() => String, { nullable: true, description: 'Phone number of the user' })
   phone: string;
+
+  @Field(() => String, { description: 'Whether the user is complete' })
+  completionStatus: 'PENDING' | 'COMPLETE';
 }

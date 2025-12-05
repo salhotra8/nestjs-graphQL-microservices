@@ -1,14 +1,14 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { Auth } from './entities/auth.entity';
 import { RegisterInput } from './dto/register-user.input';
+import { AuthUser } from './entities/auth-user.entity';
 
-@Resolver(() => Auth)
+@Resolver(() => AuthUser)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => Auth)
-  async register(@Args('input') input: RegisterInput): Promise<Auth> {
+  @Mutation(() => AuthUser)
+  async register(@Args('input') input: RegisterInput): Promise<AuthUser> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.authService.register(input);
   }

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserInput } from './dto/create-user.input';
 import { User } from '../schema/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -8,9 +7,8 @@ import { Model } from 'mongoose';
 export class UsersService {
   constructor(@InjectModel(User.name) private userSchema: Model<User>) {}
 
-  create(createUserInput: CreateUserInput) {
-    console.log(createUserInput);
-    return 'This action adds a new user';
+  create(createUserInput: User): Promise<User> {
+    return this.userSchema.create(createUserInput);
   }
 
   findAll(): Promise<User[]> {

@@ -11,11 +11,14 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
-  address: string;
+  @Prop()
+  address?: string;
+
+  @Prop()
+  phone?: string;
 
   @Prop({ required: true })
-  phone: string;
+  completionStatus: 'PENDING' | 'COMPLETED';
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

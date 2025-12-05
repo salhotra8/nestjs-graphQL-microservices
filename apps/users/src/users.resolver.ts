@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  ResolveReference,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveReference } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
 import { User as UserSchema } from '../schema/user.schema';
 import { UseInterceptors } from '@nestjs/common';
 import { GraphqlInterceptor } from 'shared/graphql.interceptor';
@@ -18,10 +10,10 @@ import { GraphqlInterceptor } from 'shared/graphql.interceptor';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.usersService.create(createUserInput);
-  }
+  // @Mutation(() => User)
+  // createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+  //   return this.usersService.create(createUserInput);
+  // }
 
   @Query(() => [User], { name: 'users' })
   @UseInterceptors(GraphqlInterceptor)

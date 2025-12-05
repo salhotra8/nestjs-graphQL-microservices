@@ -3,7 +3,6 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'apps/users/schema/user.schema';
 import {
   DirectiveLocation,
   GraphQLInt,
@@ -13,13 +12,13 @@ import {
 } from 'graphql';
 import { CachingModule } from 'shared/caching.module';
 import { DatabaseModule } from 'shared/database.module';
-import {
-  ApolloFederationDriverConfig,
-  ApolloFederationDriver,
-} from '@nestjs/apollo';
+import { ApolloFederationDriverConfig, ApolloFederationDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
+import { UserCredentials, UserCredentialSchema } from './schema/user-credential.schema';
+import { ConfigModule } from 'config/config.module';
 
 @Module({
   providers: [AuthResolver, AuthService],
@@ -76,12 +75,18 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
     // 2. JWT Setup
-    JwtModule.register({
-      secret: 'YOUR_SECRET_KEY', // change this later to get it from .env file
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '3d' },
+      }),
+      inject: [ConfigService],
     }),
     DatabaseModule,
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: UserCredentials.name, schema: UserCredentialSchema },
+    ]),
     CachingModule,
   ],
 })
